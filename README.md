@@ -14,7 +14,10 @@ Basta servir a pasta `public/`, por exemplo:
 npx wrangler pages dev public
 ```
 
-## Publicar
+## GitHub Pages
+Cada push para `main` publica a pasta `public/` em https://cabaceira10.github.io/goldenera-site/ (workflow em `.github/workflows/pages.yml`). O `/api/track` não funciona aqui, porque o GitHub Pages não corre funções.
+
+## Publicar no domínio (Cloudflare)
 Só quem tem acesso à conta Cloudflare:
 
 ```
