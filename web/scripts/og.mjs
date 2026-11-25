@@ -1,11 +1,11 @@
-// Renders the home share card to public/og-v2.jpg, 1200x630: the traced logo, the hero headline, the client proof
+// Renders the home share card to public/og-v3.jpg, 1200x630: the traced logo, the hero headline, the client proof
 // and three real reel covers. Drawn at 2x and reduced in a canvas, so the text stays sharp after WhatsApp compresses it.
-// A new card needs a new file name (og-v3.jpg): WhatsApp and Facebook keep the old image per URL.
+// A new card needs a new file name (og-v4.jpg): WhatsApp and Facebook keep the old image per URL.
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { chromium } from "playwright-core";
 
-const SAIDA = "og-v2.jpg";
+const SAIDA = "og-v3.jpg";
 const PUB = resolve("public");
 const b64 = (p) => readFileSync(p).toString("base64");
 const fonte = (f) => b64(resolve(PUB, "fonts", f));
@@ -21,11 +21,9 @@ const palavra = `<svg class="palavra" viewBox="0 0 983 222">${caminhos(tracos("N
 const hex = `<svg class="hex" viewBox="-6 -6 732 1007"><path d="${tracos("G_OURO").join("")}" fill="none" stroke="#d8ae52" stroke-opacity=".11" stroke-width="2.4"/></svg>`;
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>
-@font-face { font-family: "Instrument Serif"; src: url(data:font/woff2;base64,${fonte("serif.woff2")}) format("woff2"); }
-@font-face { font-family: "Instrument Serif"; font-style: italic; src: url(data:font/woff2;base64,${fonte("serif-it.woff2")}) format("woff2"); }
-@font-face { font-family: "Plus Jakarta Sans"; src: url(data:font/woff2;base64,${fonte("jakarta.woff2")}) format("woff2"); font-weight: 200 800; }
+@font-face { font-family: "Montserrat"; src: url(data:font/woff2;base64,${fonte("montserrat.woff2")}) format("woff2"); font-weight: 100 900; }
 * { margin: 0; box-sizing: border-box; }
-body { width: 1200px; height: 630px; overflow: hidden; position: relative; color: #f4efe6; font-family: "Plus Jakarta Sans", sans-serif;
+body { width: 1200px; height: 630px; overflow: hidden; position: relative; color: #f4efe6; font-family: "Montserrat", sans-serif;
   background: radial-gradient(ellipse 60% 85% at 80% 45%, rgb(216 174 82 / .14), transparent 62%), radial-gradient(ellipse 50% 60% at 0% 100%, rgb(216 174 82 / .06), transparent 70%), #0a0907; }
 .hex { position: absolute; height: 820px; right: 120px; top: -95px; }
 .texto { position: absolute; left: 72px; top: 64px; bottom: 64px; width: 520px; display: flex; flex-direction: column; }
@@ -33,9 +31,8 @@ body { width: 1200px; height: 630px; overflow: hidden; position: relative; color
 .simbolo { height: 66px; } .palavra { height: 40px; }
 .olho { margin-top: auto; display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: #d8ae52; }
 .olho::before { content: ""; width: 36px; height: 1px; background: #d8ae52; }
-h1 { margin-top: 18px; font-family: "Instrument Serif", serif; font-weight: 400; font-size: 70px; line-height: .98; letter-spacing: -.01em; }
-h1 em { font-style: italic; background: linear-gradient(100deg, #c99a33, #f7e3a3 45%, #d8ae52 70%, #a87d22); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
-.prova { margin-top: 22px; font-size: 19px; line-height: 1.45; color: rgb(244 239 230 / .72); }
+h1 { margin-top: 18px; font-weight: 800; font-size: 47px; line-height: 1.04; letter-spacing: -.022em; text-transform: uppercase; text-wrap: balance; }
+.prova { margin-top: 22px; font-size: 18px; line-height: 1.45; color: rgb(244 239 230 / .72); }
 .prova b { font-weight: 600; color: #f4efe6; }
 .visor { position: absolute; right: 72px; top: 50%; transform: translateY(-50%); width: 512px; height: 392px; display: flex; align-items: center; justify-content: center; gap: 14px; }
 .canto { position: absolute; width: 28px; height: 28px; border-color: #d8ae52; border-style: solid; border-width: 0; }
@@ -48,7 +45,7 @@ h1 em { font-style: italic; background: linear-gradient(100deg, #c99a33, #f7e3a3
 <div class="texto">
   <div class="marca">${simbolo}${palavra}</div>
   <p class="olho">Para negócios locais</p>
-  <h1>Estás a perder clientes <em>para quem aparece no feed?</em></h1>
+  <h1>Estás a perder clientes para quem aparece no feed?</h1>
   <p class="prova">A equipa que já grava para a <b>OK Condutor</b>, a <b>Dream Maker Imobiliária</b> e o <b>Alverca Padel Club</b>.</p>
 </div>
 <div class="visor"><span class="canto a"></span><span class="canto b"></span><span class="canto c"></span><span class="canto d"></span>

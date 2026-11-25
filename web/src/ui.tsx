@@ -44,8 +44,8 @@ export function Revela({ children, className = "", as: Tag = "div", style }: { c
 }
 
 /**
- * Section title in the serif, one masked line per entry: each line rises out of its own window.
- * The last line is the accent (italic, gold). `claro` is for the ivory band.
+ * Section title, one masked line per entry: each line rises out of its own window.
+ * `claro` is for the ivory band.
  */
 export function Titulo({ id, linhas, className = "", Tag = "h2" }: { id?: string; linhas: readonly string[]; className?: string; Tag?: "h2" | "h3" }) {
   const ref = useRef<HTMLHeadingElement>(null);
@@ -54,7 +54,7 @@ export function Titulo({ id, linhas, className = "", Tag = "h2" }: { id?: string
     <Tag ref={ref} id={id} className={`titulo ${visto ? "vis" : ""} ${className}`}>
       {linhas.map((l, n) => (
         <span key={l} className="lm">
-          <span className={`li ${n === linhas.length - 1 && linhas.length > 1 ? "acento" : ""}`} style={{ "--n": n } as CSSProperties}>
+          <span className="li" style={{ "--n": n } as CSSProperties}>
             {l}
           </span>{" "}
         </span>

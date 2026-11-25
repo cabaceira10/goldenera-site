@@ -36,15 +36,10 @@ function Video() {
           className="h-full w-full object-cover"
         />
         {!anda && (
-          <button type="button" onClick={toca} aria-label="Ver o vídeo de 20 segundos" className="visor-isco group">
-            <span aria-hidden="true" className="visor-sobre">Os nossos reels em</span>
-            <span aria-hidden="true" className="visor-numero">
-              20 <em>segundos</em>
-            </span>
+          <button type="button" onClick={toca} aria-label="Ver o vídeo de 20 segundos" className="visor-isco">
             <span className="visor-play">
               <Play className="ml-1 h-7 w-7 sm:h-8 sm:w-8" />
             </span>
-            <span aria-hidden="true" className="visor-sob">Carrega para ver</span>
           </button>
         )}
       </div>
@@ -73,7 +68,7 @@ export default function Heroi() {
         </m.p>
 
         <h1 id="t-topo" className="heroi-titulo">
-          Estás a perder clientes <em>para quem aparece no feed?</em>
+          Estás a perder clientes para quem aparece no feed?
         </h1>
 
         <m.p {...entra(0.2)} className="mt-6 max-w-2xl text-pretty text-[17px] font-light leading-relaxed text-marfim/80 sm:text-xl">

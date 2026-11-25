@@ -95,7 +95,7 @@ export default function Pedido() {
           </div>
           <div className="olho olho-centro">05 · Proposta</div>
           <h2 id="t-contacto" className="titulo">
-            Pede a tua <span className="acento">proposta.</span>
+            Pede a tua proposta.
           </h2>
           <p>Sem compromisso. Respondemos no WhatsApp com o plano certo para o teu negócio.</p>
         </div>
