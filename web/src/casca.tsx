@@ -1,24 +1,22 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, MotionConfig, MotionGlobalConfig } from "framer-motion";
-import { CHAVE_CALMO, FALAR, NAV, R, WA_HREF, curva } from "./base";
-import { Logotipo, MovContexto, WhatsApp } from "./ui";
-
-/* ---------------- sky ---------------- */
-function Ceu() {
-  return (
-    <div className="ceu" aria-hidden="true">
-      <span className="ceu-luz l1" />
-      <span className="ceu-luz l2" />
-      <span className="ceu-luz l3" />
-    </div>
-  );
-}
+import { AnimatePresence, domAnimation, LazyMotion, m, MotionConfig, MotionGlobalConfig } from "framer-motion";
+import { CHAVE_CALMO, FALAR, NAV, R, TELEFONE, WA_HREF, curva } from "./base";
+import { Ouro } from "./marca";
+import { NOME } from "./marca-tracos";
+import { Logotipo, MovContexto, Seta, WhatsApp } from "./ui";
 
 /* ---------------- header ---------------- */
 function Topo() {
   const [aberto, setAberto] = useState(false);
+  const [solido, setSolido] = useState(false);
   const botao = useRef<HTMLButtonElement>(null);
-  const cabeca = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const f = () => setSolido(scrollY > 24);
+    f();
+    addEventListener("scroll", f, { passive: true });
+    return () => removeEventListener("scroll", f);
+  }, []);
 
   useEffect(() => {
     if (!aberto) return;
@@ -27,104 +25,136 @@ function Topo() {
       setAberto(false);
       botao.current?.focus();
     };
-    const sai = (e: FocusEvent) => {
-      if (!cabeca.current?.contains(e.relatedTarget as Node | null)) setAberto(false);
-    };
-    const h = cabeca.current;
     document.addEventListener("keydown", tecla);
-    h?.addEventListener("focusout", sai);
+    document.documentElement.classList.add("menu-aberto");
     return () => {
       document.removeEventListener("keydown", tecla);
-      h?.removeEventListener("focusout", sai);
+      document.documentElement.classList.remove("menu-aberto");
     };
   }, [aberto]);
 
   return (
-    <header ref={cabeca} className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5">
-      <div className={`mx-auto max-w-[1240px] rounded-2xl border border-white/10 shadow-[0_14px_40px_-16px_rgba(0,0,0,.8)] backdrop-blur-xl transition-colors ${aberto ? "bg-night/95" : "bg-night/80"}`}>
-        <div className="flex h-14 items-center gap-4 pl-3 pr-2">
+    <>
+      <header className={`topo ${solido || aberto ? "solido" : ""}`}>
+        <div className="mx-auto flex h-[68px] max-w-7xl items-center gap-6 px-5 sm:h-[76px] sm:px-8">
           <a href={R("")} aria-label="GoldenEra Marketing Digital, início" className="flex h-11 shrink-0 items-center">
             <Logotipo topo />
           </a>
-          <nav aria-label="Principal" className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+          <nav aria-label="Principal" className="hidden flex-1 items-center justify-center gap-8 lg:flex">
             {NAV.map(([t, h]) => (
-              <a key={h} href={h} className="rounded-lg px-3.5 py-2 text-sm font-medium text-white/65 transition hover:text-white">
+              <a key={h} href={h} className="topo-link">
                 {t}
               </a>
             ))}
           </nav>
-          <a href={WA_HREF} target="_blank" rel="noopener" className="hidden h-10 shrink-0 items-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-ink transition hover:bg-marfim lg:inline-flex">
+          <a href={WA_HREF} target="_blank" rel="noopener" className="botao-linha hidden lg:inline-flex">
             <WhatsApp className="h-4 w-4" />
             {FALAR}
           </a>
           <button
             ref={botao}
             type="button"
-            className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[.03] lg:hidden"
+            className="burger ml-auto lg:hidden"
             aria-expanded={aberto}
             aria-controls={aberto ? "menu-movel" : undefined}
             aria-label={aberto ? "Fechar menu" : "Abrir menu"}
             onClick={() => setAberto(!aberto)}
           >
-            <span className="relative block h-3 w-4">
-              <span className={`absolute left-0 h-[1.5px] w-4 bg-white transition ${aberto ? "top-1.5 rotate-45" : "top-0"}`} />
-              <span className={`absolute left-0 h-[1.5px] w-4 bg-white transition ${aberto ? "top-1.5 -rotate-45" : "top-[10px]"}`} />
-            </span>
+            <span className={aberto ? "x" : ""} />
           </button>
         </div>
-        <AnimatePresence>
-          {aberto && (
-            <motion.nav
-              id="menu-movel"
-              aria-label="Menu"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.35, ease: curva }}
-              className="overflow-hidden border-t border-white/[.06] lg:hidden"
-            >
-              <div className="flex flex-col px-4 pb-4 pt-1">
-                {NAV.map(([t, h]) => (
-                  <a key={h} href={h} onClick={() => setAberto(false)} className="border-b border-white/[.06] py-3.5 text-lg font-medium tracking-[-0.02em] text-white">
+      </header>
+      <AnimatePresence>
+        {aberto && (
+          <m.nav
+            id="menu-movel"
+            aria-label="Menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: curva }}
+            className="menu-movel lg:hidden"
+          >
+            <ol>
+              {NAV.map(([t, h], i) => (
+                <m.li key={h} initial={{ y: 28 }} animate={{ y: 0 }} transition={{ duration: 0.6, delay: 0.05 + i * 0.05, ease: curva }}>
+                  <a href={h} onClick={() => setAberto(false)}>
+                    <span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                     {t}
                   </a>
-                ))}
-                <a href={WA_HREF} target="_blank" rel="noopener" className="mt-4 flex h-12 items-center justify-center gap-2 rounded-xl bg-white font-semibold text-ink">
-                  <WhatsApp className="h-5 w-5" />
-                  {FALAR}
-                </a>
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
-      </div>
-    </header>
+                </m.li>
+              ))}
+            </ol>
+            <a href={WA_HREF} target="_blank" rel="noopener" className="botao-ouro mt-10 w-full">
+              <WhatsApp className="h-5 w-5" />
+              {FALAR}
+            </a>
+          </m.nav>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
-
 /* ---------------- footer ---------------- */
 function Rodape({ mov, setMov }: { mov: boolean; setMov: (v: boolean) => void }) {
-  const link = "inline-flex min-h-11 items-center text-[13px] text-white/60 transition hover:text-white";
   return (
-    <footer className="border-t border-white/[.06] bg-night/60 px-5 pb-32 pt-8 sm:px-8 lg:pb-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <a href={R("")} aria-label="GoldenEra Marketing Digital, início" className="w-fit">
-          <Logotipo />
-        </a>
-        <nav aria-label="Rodapé" className="flex flex-wrap items-center gap-x-5">
-          <a href={WA_HREF} target="_blank" rel="noopener" className={link}>
-            WhatsApp
+    <footer className="rodape">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 pt-20 sm:px-8 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <a href={R("")} aria-label="GoldenEra Marketing Digital, início" className="inline-flex min-h-11 items-center">
+            <Logotipo />
           </a>
-          <a href={R("privacidade/")} className={link}>
-            Privacidade e cookies
-          </a>
-          <button type="button" aria-pressed={!mov} onClick={() => setMov(!mov)} className={`${link} text-left`}>
-            {mov ? "Reduzir movimento" : "Ligar movimento"}
-          </button>
+          <p className="mt-6 max-w-sm text-pretty text-[15px] font-light leading-relaxed text-marfim/60">Conteúdo, redes sociais e anúncios para negócios locais. Caldas da Rainha, Leiria e Oeste.</p>
+        </div>
+        <nav aria-label="Rodapé">
+          <p className="olho">Secções</p>
+          <ul className="rodape-lista">
+            {NAV.map(([t, h]) => (
+              <li key={h}>
+                <a href={h}>{t}</a>
+              </li>
+            ))}
+          </ul>
         </nav>
+        <div>
+          <p className="olho">Contacto</p>
+          <ul className="rodape-lista">
+            <li>
+              <a href={WA_HREF} target="_blank" rel="noopener">
+                WhatsApp
+              </a>
+            </li>
+            <li>
+              <a href={`tel:${TELEFONE.replace(/\s/g, "")}`}>{TELEFONE}</a>
+            </li>
+            <li>
+              <a href={R("privacidade/")}>Privacidade e cookies</a>
+            </li>
+            <li>
+              <button type="button" aria-pressed={!mov} onClick={() => setMov(!mov)}>
+                {mov ? "Reduzir movimento" : "Ligar movimento"}
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-      <p className="mx-auto mt-3 max-w-7xl text-xs leading-relaxed text-white/50">GoldenEra Marketing Digital · conteúdo, redes sociais e anúncios para negócios locais · Caldas da Rainha, Leiria e Oeste</p>
+      <div aria-hidden="true" className="rodape-marca">
+        <svg viewBox="0 0 983 172">
+          <defs>
+            <linearGradient id="ge-marca" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#d8ae52" stopOpacity=".34" />
+              <stop offset="1" stopColor="#d8ae52" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <g fill="url(#ge-marca)">
+            {NOME.map((d, i) => (
+              <path key={i} d={d} fillRule="evenodd" />
+            ))}
+          </g>
+        </svg>
+      </div>
+      <p className="mx-auto max-w-7xl border-t border-areia/10 px-5 py-6 text-xs text-marfim/60 sm:px-8">GoldenEra Marketing Digital · conteúdo, redes sociais e anúncios para negócios locais</p>
     </footer>
   );
 }
@@ -155,18 +185,15 @@ function Fixo() {
     <AnimatePresence>
       {mostra && (
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
-          <motion.div initial={{ y: 110 }} animate={{ y: 0 }} exit={{ y: 110 }} transition={{ duration: 0.45, ease: curva }} className="vidro pointer-events-auto flex w-full gap-2 rounded-2xl p-1.5 sm:w-auto">
-            <a
-              href={WA_HREF}
-              target="_blank"
-              rel="noopener"
-              data-cta="whatsapp-fixo"
-              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-wa px-6 text-[15px] font-semibold text-[#06210f] transition hover:brightness-110 sm:flex-none"
-            >
-              <WhatsApp className="h-5 w-5" />
+          <m.div initial={{ y: 110 }} animate={{ y: 0 }} exit={{ y: 110 }} transition={{ duration: 0.45, ease: curva }} className="fixo pointer-events-auto w-full sm:w-auto">
+            <a href={WA_HREF} target="_blank" rel="noopener" data-cta="whatsapp-fixo">
+              <span className="fixo-icone">
+                <WhatsApp className="h-[18px] w-[18px]" />
+              </span>
               {FALAR}
+              <Seta className="ml-auto h-4 w-4 text-areia sm:ml-2" />
             </a>
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>
@@ -183,7 +210,7 @@ function guardaMov(mov: boolean) {
   }
 }
 
-/** The shell around the page: sky, header, page, contact, footer, fixed bar, motion switch. */
+/** The shell around the page: gold gradient, grain, header, page, footer, fixed bar, motion switch. */
 export default function Casca({ children }: { children: (mov: boolean) => ReactNode }) {
   const [mov, setMov] = useState(() => document.documentElement.dataset.mov !== "off");
   const primeira = useRef(true);
@@ -205,10 +232,12 @@ export default function Casca({ children }: { children: (mov: boolean) => ReactN
   }, []);
 
   return (
+    <LazyMotion features={domAnimation} strict>
     <MotionConfig reducedMotion={mov ? "never" : "always"}>
       <MovContexto.Provider value={mov}>
-        <Ceu />
-        <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[90] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-ink">
+        <Ouro />
+        <div className="grao" aria-hidden="true" />
+        <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[90] focus:rounded-full focus:bg-marfim focus:px-4 focus:py-2 focus:text-ink">
           Saltar para o conteúdo
         </a>
         <Topo />
@@ -219,5 +248,6 @@ export default function Casca({ children }: { children: (mov: boolean) => ReactN
         <Fixo />
       </MovContexto.Provider>
     </MotionConfig>
+    </LazyMotion>
   );
 }

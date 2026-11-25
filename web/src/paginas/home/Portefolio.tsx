@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { A } from "../../base";
-import { Surge, TituloBloco } from "../../ui";
+import { Olho, Revela, Seta, Titulo } from "../../ui";
 
 // The event photos of the current site, grouped by event. Only 01 to 04 exist at 1600 px; the rest are 720 px.
 const FOTOS = [
@@ -36,10 +36,10 @@ function Visor({ fotos, titulo, i, muda, fecha }: { fotos: readonly string[]; ti
       document.body.style.overflow = antes;
     };
   }, [i, n, muda, fecha]);
-  const seta = "grid h-12 w-12 place-items-center rounded-full bg-white/10 text-2xl text-white backdrop-blur transition hover:bg-white/20";
+  const seta = "visor-seta";
   return (
     <div role="dialog" aria-modal="true" aria-label={`${titulo}, fotografia ${i + 1} de ${n}`} className="fixed inset-0 z-[90] flex flex-col bg-night/95 p-3 sm:p-6" onClick={fecha}>
-      <div className="flex items-center justify-between text-sm font-bold uppercase tracking-[0.06em] text-white">
+      <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.22em] text-areia">
         <span>
           {titulo} · {String(i + 1).padStart(2, "0")}/{n}
         </span>
@@ -64,51 +64,67 @@ function Visor({ fotos, titulo, i, muda, fecha }: { fotos: readonly string[]; ti
 export default function Portefolio() {
   const [grupo, setGrupo] = useState(0);
   const [aberta, setAberta] = useState<number | null>(null);
+  const fita = useRef<HTMLDivElement>(null);
   const g = FOTOS[grupo];
+  const anda = (d: number) => {
+    const el = fita.current;
+    const c = el?.firstElementChild as HTMLElement | null;
+    if (el && c) el.scrollBy({ left: d * (c.offsetWidth + 16), behavior: "smooth" });
+  };
+  const muda = (i: number) => {
+    setGrupo(i);
+    fita.current?.scrollTo({ left: 0 });
+  };
   return (
-    <section id="portefolio" aria-labelledby="t-portefolio" className="relative mx-auto max-w-[1500px] px-5 py-20 sm:px-8 sm:py-24">
-      <TituloBloco id="t-portefolio" titulo={["Não acredites em nós.", "Vê o trabalho."]} />
+    <section id="portefolio" aria-labelledby="t-portefolio" className="seccao relative mx-auto max-w-7xl px-5 sm:px-8">
+      <Olho>03 · Eventos</Olho>
+      <Titulo id="t-portefolio" linhas={["Não acredites em nós.", "Vê o trabalho."]} />
 
-      <Surge>
-        <h3 className="mt-12 text-2xl font-extrabold uppercase tracking-[-0.01em] text-white sm:text-4xl">Eventos que continuam a ser falados no dia seguinte</h3>
-        <p className="mt-2 max-w-2xl text-pretty text-[15px] leading-relaxed text-mute">Seja qual for o evento, filmamos e fotografamos com o mesmo nível dos nossos reels e entregamos tudo editado, pronto a publicar enquanto ainda se fala dele. Toca numa fotografia para a ver em grande.</p>
-      </Surge>
-      <div role="tablist" aria-label="Eventos fotografados" className="mt-5 flex flex-wrap gap-2">
-        {FOTOS.map((f, i) => (
-          <button
-            key={f.titulo}
-            type="button"
-            role="tab"
-            aria-selected={i === grupo}
-            onClick={() => setGrupo(i)}
-            className={`h-10 rounded-full px-4 text-[13px] font-bold uppercase tracking-[0.02em] transition ${i === grupo ? "bg-areia text-ink" : "bg-white/[.06] text-soft ring-1 ring-white/10 hover:bg-white/[.12]"}`}
-          >
-            {f.titulo}
-          </button>
-        ))}
+      <div className="mt-14 grid gap-6 lg:grid-cols-[1.1fr_.9fr] lg:items-end lg:gap-20">
+        <Titulo Tag="h3" className="titulo-m" linhas={["Eventos que continuam a ser falados no dia seguinte."]} />
+        <Revela className="sobe">
+          <p className="fio-topo text-pretty text-base font-light leading-relaxed text-marfim/75">Seja qual for o evento, filmamos e fotografamos com o mesmo nível dos nossos reels e entregamos tudo editado, pronto a publicar enquanto ainda se fala dele. Toca numa fotografia para a ver em grande.</p>
+        </Revela>
       </div>
-      <div className="-mx-5 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 sm:-mx-8 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+      <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
+        <div role="tablist" aria-label="Eventos fotografados" className="separadores">
+          {FOTOS.map((f, i) => (
+            <button key={f.titulo} type="button" role="tab" aria-selected={i === grupo} onClick={() => muda(i)} className="separador">
+              {f.titulo}
+            </button>
+          ))}
+        </div>
+        <div className="hidden gap-2 sm:flex">
+          <button type="button" onClick={() => anda(-1)} aria-label="Fotografias anteriores" className="circulo">
+            <Seta className="h-4 w-4 rotate-180" />
+          </button>
+          <button type="button" onClick={() => anda(1)} aria-label="Fotografias seguintes" className="circulo">
+            <Seta className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+      <div ref={fita} className="fita-fotos">
         {g.fotos.map((f, i) => (
-          <button key={f} type="button" onClick={() => setAberta(i)} aria-label={`${g.titulo}, abrir a fotografia ${i + 1}`} className="group relative aspect-[3/2] w-[86vw] max-w-[760px] flex-none snap-start overflow-hidden rounded-2xl bg-deep ring-1 ring-white/10">
-            <img src={foto(f)} alt="" loading="lazy" decoding="async" draggable={false} className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
+          <button key={f} type="button" onClick={() => setAberta(i)} aria-label={`${g.titulo}, abrir a fotografia ${i + 1}`} className="foto-evento group">
+            <img src={foto(f)} alt="" loading="lazy" decoding="async" draggable={false} />
+            <span aria-hidden="true">
+              {g.titulo} · {String(i + 1).padStart(2, "0")}/{String(g.fotos.length).padStart(2, "0")}
+            </span>
           </button>
         ))}
       </div>
 
-      <Surge>
-        <h3 className="mt-20 text-2xl font-extrabold uppercase tracking-[-0.01em] text-white sm:text-4xl">O que dizem os nossos clientes</h3>
-      </Surge>
-      <div className="mt-6 grid gap-4 sm:gap-5 lg:grid-cols-2">
+      <div className="mt-24 grid gap-12 lg:grid-cols-2 lg:gap-16">
         {CITACOES.map((c, i) => (
-          <Surge key={c.nome} atraso={i * 0.08}>
-            <figure className="h-full rounded-3xl border border-white/[.08] bg-gradient-to-b from-deep/80 to-ink/80 p-6 sm:p-8">
-              <blockquote className="text-pretty text-lg leading-relaxed text-white/90">“{c.texto}”</blockquote>
-              <figcaption className="mt-5 text-sm">
-                <b className="font-extrabold uppercase tracking-[0.04em] text-areia">{c.nome}</b>
-                <span className="text-mute"> · {c.papel}</span>
-              </figcaption>
-            </figure>
-          </Surge>
+          <Revela as="figure" key={c.nome} className="citacao sobe" style={{ transitionDelay: `${i * 0.1}s` }}>
+            <span aria-hidden="true" className="citacao-aspa">“</span>
+            <blockquote>{c.texto}</blockquote>
+            <figcaption>
+              <b>{c.nome}</b>
+              <span>{c.papel}</span>
+            </figcaption>
+          </Revela>
         ))}
       </div>
 

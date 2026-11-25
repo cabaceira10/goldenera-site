@@ -1,23 +1,22 @@
 import { MesaReels } from "../../reels";
-import { DuasLinhas, Surge, tituloH2 } from "../../ui";
+import { Olho, Revela, Titulo } from "../../ui";
 
-/** The format: the promise on the left, the real reels on the deck. Copy from the current site, word for word. */
+/** The promise on the left, the real reels on the deck. Copy from the current site, word for word. */
 export default function Reels() {
   return (
-    <section id="reels" aria-labelledby="t-reels" className="relative overflow-x-clip py-16 sm:py-24">
-      <div className="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-2 lg:gap-20">
-        <Surge>
-          <h2 id="t-reels" className={`${tituloH2} lg:text-[3.2rem]`}>
-            <DuasLinhas l={["Provavelmente", "já nos viste no teu feed."]} />
-          </h2>
-        </Surge>
-        <Surge atraso={0.12} className="lg:pt-3">
-          <p className="border-t border-white/15 pt-5 text-pretty text-base leading-relaxed text-white/80 sm:text-lg">
+    <section id="reels" aria-labelledby="t-reels" className="seccao relative overflow-x-clip">
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end lg:gap-20">
+        <div>
+          <Olho>01 · O trabalho</Olho>
+          <Titulo id="t-reels" linhas={["Provavelmente", "já nos viste no teu feed."]} />
+        </div>
+        <Revela className="sobe">
+          <p className="fio-topo text-pretty text-base font-light leading-relaxed text-marfim/75 sm:text-lg">
             Uma pessoa real do teu negócio, a falar para quem está do outro lado do ecrã. É isto que faz os clientes lembrarem-se de ti. Onze reels reais, de uma escola de condução, de um clube de padel, de uma marca de piscinas e de outros negócios locais.
           </p>
-        </Surge>
+        </Revela>
       </div>
-      <MesaReels className="mt-10 lg:mt-12" />
+      <MesaReels className="mt-12 lg:mt-16" />
     </section>
   );
 }

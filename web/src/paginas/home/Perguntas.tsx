@@ -1,4 +1,4 @@
-import { Surge, TituloBloco } from "../../ui";
+import { Olho, Revela, Titulo } from "../../ui";
 
 // Every answer comes from a sentence of the current site; nothing here is new.
 const PERGUNTAS = [
@@ -13,24 +13,27 @@ const PERGUNTAS = [
 
 export default function Perguntas() {
   return (
-    <section id="perguntas" aria-labelledby="t-perguntas" className="relative mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-      <TituloBloco id="t-perguntas" titulo={["Perguntas", "que nos fazem."]} />
-      <Surge atraso={0.08}>
-        <div className="divide-y divide-white/10 border-y border-white/10">
-          {PERGUNTAS.map(([q, r]) => (
-            <details key={q} className="pergunta group">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 text-left text-base font-semibold tracking-[-0.01em] text-white sm:text-lg [&::-webkit-details-marker]:hidden">
-                {q}
-                <span aria-hidden="true" className="relative h-4 w-4 shrink-0">
-                  <span className="absolute left-0 top-1/2 h-[1.5px] w-4 -translate-y-1/2 bg-areia" />
-                  <span className="absolute left-1/2 top-0 h-4 w-[1.5px] -translate-x-1/2 bg-areia transition-transform duration-300 group-open:scale-y-0" />
+    <section id="perguntas" aria-labelledby="t-perguntas" className="seccao relative mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+      <div>
+        <Olho>06 · Perguntas</Olho>
+        <Titulo id="t-perguntas" linhas={["Perguntas", "que nos fazem."]} />
+      </div>
+      <Revela className="sobe">
+        <div className="perguntas">
+          {PERGUNTAS.map(([q, r], i) => (
+            <details key={q} className="pergunta">
+              <summary>
+                <span className="pergunta-num" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
+                <span className="flex-1">{q}</span>
+                <span aria-hidden="true" className="pergunta-mais" />
               </summary>
-              <p className="pb-5 pr-10 text-pretty text-[15px] leading-relaxed text-mute sm:text-base">{r}</p>
+              <p>{r}</p>
             </details>
           ))}
         </div>
-      </Surge>
+      </Revela>
     </section>
   );
 }

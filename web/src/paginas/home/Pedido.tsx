@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from "react";
-import { A, R, WA_NUMERO } from "../../base";
+import { R, WA_NUMERO } from "../../base";
+import { Simbolo } from "../../marca";
 
 // The Imogrow audit form (imogrow-static/auditoria.html), copied: same card, same logo in its orbit, same three
 // one-field screens, same bar, same buttons. Only the brand, the questions and the send (WhatsApp) change.
@@ -90,10 +91,12 @@ export default function Pedido() {
             <div className="ped-logo__halo" />
             <div className="ped-logo__anel" />
             <div className="ped-logo__orbita" />
-            <div className="ped-logo__base" style={{ WebkitMaskImage: `url(${A("brand/g.png")})`, maskImage: `url(${A("brand/g.png")})` }} />
+            <Simbolo className="ped-logo__base" />
           </div>
-          <span className="ped-marca">GoldenEra</span>
-          <h2 id="t-contacto">Pede a tua proposta.</h2>
+          <div className="olho olho-centro">05 · Proposta</div>
+          <h2 id="t-contacto" className="titulo">
+            Pede a tua <span className="acento">proposta.</span>
+          </h2>
           <p>Sem compromisso. Respondemos no WhatsApp com o plano certo para o teu negócio.</p>
         </div>
         <div className="pedido">
