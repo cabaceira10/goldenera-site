@@ -11,8 +11,8 @@
   try { consent = localStorage.getItem(KEY) || ""; } catch (e) {}
 
   const TXT = {
-    pt: { msg: "Usamos cookies do Meta para perceber se os nossos anúncios funcionam. Só são ativados se aceitares.", yes: "Aceitar", no: "Recusar" },
-    en: { msg: "We use Meta cookies to see whether our ads work. They are only turned on if you accept.", yes: "Accept", no: "Decline" }
+    pt: { msg: "Usamos cookies do Meta para perceber se os nossos anúncios funcionam. Só são ativados se aceitares.", yes: "Aceitar", no: "Recusar", mais: "Política de privacidade" },
+    en: { msg: "We use Meta cookies to see whether our ads work. They are only turned on if you accept.", yes: "Accept", no: "Decline", mais: "Privacy policy" }
   };
   const lang = () => (document.documentElement.lang || "pt").startsWith("en") ? "en" : "pt";
 
@@ -32,7 +32,7 @@
   document.addEventListener("click", e => {
     const a = e.target.closest("[data-wa]");
     if (!a || !window.fbq) return;
-    fbq("track", "Lead", { content_name: a.dataset.wa === "evento" ? "Evento" : "WhatsApp" });
+    fbq("track", "Lead", { content_name: { imoveis: "Imóveis", brand: "Marca pessoal" }[a.dataset.wa] || "WhatsApp" });
     /* No telemóvel a app do WhatsApp abre logo e o browser pode não chegar a enviar o Lead.
        Por isso esperamos um instante e só depois abrimos o WhatsApp (no mesmo separador,
        para o browser não bloquear como se fosse uma janela pop-up).
@@ -56,7 +56,12 @@
     <div class="consent__btns"><button type="button" class="consent__no"></button><button type="button" class="consent__yes"></button></div>`;
   const paint = () => {
     const t = TXT[lang()];
-    bar.querySelector(".consent__msg").textContent = t.msg;
+    const msg = bar.querySelector(".consent__msg");
+    msg.textContent = t.msg + " ";
+    const a = document.createElement("a");
+    a.href = "./privacidade/";
+    a.textContent = t.mais;
+    msg.appendChild(a);
     bar.querySelector(".consent__yes").textContent = t.yes;
     bar.querySelector(".consent__no").textContent = t.no;
   };
